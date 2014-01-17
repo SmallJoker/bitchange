@@ -97,7 +97,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 				end
 			end
 			if(err_msg == "") then
-				exchange_worth = exchange_worth * 0.995
+				exchange_worth = exchange_worth / 1.0059
 				local price = round(exchange_worth - 0.1, 1) * 10
 				local cur_money = money.get_money(player_name)
 				money.set_money(player_name, cur_money + price)
@@ -126,7 +126,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 				money.set_money(player_name, cur_money - price)
 				bank_inv:remove_item("coins", coin_stack)
 				player_inv:add_item("main", coin_stack)
-				exchange_worth = exchange_worth * 1.005
+				exchange_worth = exchange_worth * 1.006
 				changes_made = true
 				err_msg = "Bought 10 MineCoins for "..price.." money"
 			end
