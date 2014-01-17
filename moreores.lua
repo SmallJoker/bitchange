@@ -2,7 +2,7 @@
 --License: WTFPL
 
 if (bitchange_use_moreores_tin) then
-	if(bitchange_need_generate_tin) then
+	if(bitchange_need_generate_tin and not minetest.get_modpath("moreores")) then
 		minetest.register_node(":moreores:mineral_tin", {
 				description = "Tin Ore",
 				tiles = {"default_stone.png^moreores_mineral_tin.png"},
@@ -63,7 +63,7 @@ if (bitchange_use_moreores_tin) then
 end
 
 if (bitchange_use_technic_zinc) then
-	if (bitchange_need_generate_zinc) then
+	if (bitchange_need_generate_zinc and not minetest.get_modpath("technic_worldgen")) then
 		minetest.register_node(":technic:mineral_zinc", {
 			description = "Zinc Ore",
 			tile_images = { "default_stone.png^technic_mineral_zinc.png" },

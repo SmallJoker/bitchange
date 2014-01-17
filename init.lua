@@ -15,11 +15,20 @@ end
 if(bitchange_enable_warehouse) then
 	dofile(mod_path.."/warehouse.lua")
 end
-if(bitchange_bank_type ~= "") then
-	if(minetest.get_modpath(bitchange_bank_type) ~= nil) then
-		dofile(mod_path.."/bank_"..bitchange_bank_type..".lua")
-	else
-		print("[BitChange] Bank: Type or mod not found or enabled: "..bitchange_bank_type)
+if(bitchange_enable_bank) then
+	local loaded_bank = ""
+	if(minetest.get_modpath("money") ~= nil) then
+		loaded_bank = "money"
+		dofile(mod_path.."/bank_"..loaded_bank..".lua")
+	elseif(minetest.get_modpath("money2") ~= nil) then
+		loaded_bank = "money2"
+		dofile(mod_path.."/bank_"..loaded_bank..".lua")
+	elseif(minetest.get_modpath("currency") ~= nil) then
+		loaded_bank = "currency"
+		dofile(mod_path.."/bank_"..loaded_bank..".lua")
+	end
+	if(loaded_bank ~= "") then
+		print("[BitChange] Bank loaded: "..loaded_bank)
 	end
 end
 
