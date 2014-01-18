@@ -10,6 +10,7 @@
 ==> How to ...
 	-> Enable something: Open 'config.txt' with your editor and modify it
 	-> See crafts: get an extention for your inventory or browse through the codes
+	-> Power the tool repair: insert damaged tool in the first box and someminecoins intothe 2nd, then wait.
 
 ==> Add special access to nodes, how?
 	-> Exchange shop: open 'shop.lua' and edit the function 'has_exchange_shop_privilege',
