@@ -13,12 +13,13 @@ bitchange_enable_toolrepair		=	true
 -- Supported: money (by kotolegokot), money2 (by Bad Command), currency (by Dan Duncombe)
 bitchange_enable_bank			=	true
 
--- Tin converting/generation
-bitchange_use_moreores_tin		=	false -- Activate support
-bitchange_need_generate_tin		=	false -- Generate if needed
--- Zinc converting/generation
-bitchange_use_technic_zinc		=	false -- Activate support
-bitchange_need_generate_zinc	=	false -- Generate if needed
+-- Converting other ores to MineCoins
+-- Tin		moreores
+-- Zinc		technic_worldgen
+-- Quartz	quartz
+bitchange_use_moreores_tin		=	false
+bitchange_use_technic_zinc		=	false
+bitchange_use_quartz			=	false
 
 -- Pipeworks support
 bitchange_exchangeshop_pipeworks	=	false

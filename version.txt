@@ -1,3 +1,7 @@
+======>- Version 1.6.9 -<======
+- optional quartz converting support
+- some other little changes (also in the configuration)
+
 ======>- Version 1.6.8 -<======
 - tool repair node
 - privilege: bitchange

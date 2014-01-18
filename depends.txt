@@ -1,6 +1,7 @@
 default
 moreores?
-technic?
+technic_worldgen?
+quartz?
 pipeworks?
 money?
 money2?
