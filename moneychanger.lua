@@ -120,9 +120,8 @@ moneychanger.update_fields = function(pos, listname, index, stack, take)
 	end
 	if(canMove) then
 		return stack:get_count() 
-	else
-		return 0
 	end
+	return 0
 end
 
 minetest.register_node("bitchange:moneychanger", {
@@ -151,35 +150,31 @@ minetest.register_node("bitchange:moneychanger", {
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if(player:get_player_name() ~= meta:get_string("owner")) then
+		if(not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return 0
 		end
 		if(listname == "source") then
 			local stack_name = stack:get_name()
 			if(stack_name == "bitchange:mineninth" or stack_name == "bitchange:minecoin" or stack_name == "bitchange:minecoinblock") then
 				return moneychanger.update_fields(pos, listname, index, stack, false)
-			else
-				return 0
 			end
-		else
-			return 0
 		end
+		return 0
 	end,
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if(player:get_player_name() == meta:get_string("owner") or minetest.get_player_privs(name)["server"]) then
+		if(bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return moneychanger.update_fields(pos, listname, index, stack, true)
-		else
-			return 0
 		end
+		return 0
 	end,
 	can_dig = function(pos, player)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
-		if(player:get_player_name() ~= meta:get_string("owner") and not minetest.get_player_privs(name)["server"]) then
-			return 0
+		if(bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
+			return inv:is_empty("source") and inv:is_empty("output") and inv:is_empty("rest")
 		end
-		return inv:is_empty("source") and inv:is_empty("output") and inv:is_empty("rest")
+		return 0
 	end
 })
 

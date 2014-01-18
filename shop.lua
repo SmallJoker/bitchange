@@ -5,11 +5,6 @@
 
 local exchange_shop = {}
 
-local function has_exchange_shop_privilege(meta, player)
-	local player_name = player:get_player_name()
-	return ((player_name == meta:get_string("owner")) or minetest.get_player_privs(player_name).server)
-end
-
 local function get_exchange_shop_formspec(number,pos,title)
 	local formspec = ""
 	local name = "nodemeta:"..pos.x..","..pos.y..","..pos.z
@@ -94,6 +89,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		local pos = exchange_shop[player_name]
 		local meta = minetest.get_meta(pos)
 		local title = meta:get_string("title") or ""
+		local shop_owner = meta:get_string("owner")
 		
 		if(fields.exchange) then
 			local player_inv = sender:get_inventory()
@@ -209,11 +205,11 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 			if(err_msg ~= "") then
 				minetest.chat_send_player(player_name, "Exchange shop: "..err_msg)
 			end
-		elseif(fields.vstock and has_exchange_shop_privilege(meta, sender) and not fields.quit) then
+		elseif(fields.vstock and bitchange_has_access(shop_owner, player_name) and not fields.quit) then
 			minetest.show_formspec(sender:get_player_name(),"bitchange:shop_formspec",get_exchange_shop_formspec(3, pos, title))
-		elseif(fields.vcustm and has_exchange_shop_privilege(meta, sender) and not fields.quit) then
+		elseif(fields.vcustm and bitchange_has_access(shop_owner, player_name) and not fields.quit) then
 			minetest.show_formspec(sender:get_player_name(),"bitchange:shop_formspec",get_exchange_shop_formspec(2, pos, title))
-		elseif(fields.quit and has_exchange_shop_privilege(meta, sender)) then
+		elseif(fields.quit and bitchange_has_access(shop_owner, player_name)) then
 			if(fields.title and title ~= fields.title) then
 				if(fields.title ~= "") then
 					meta:set_string("infotext", "Exchange shop \""..fields.title.."\" (owned by "..
@@ -284,21 +280,21 @@ minetest.register_node("bitchange:shop", {
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
-		if (not has_exchange_shop_privilege(meta, player)) then
+		if (not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return 0
 		end
 		return count
 	end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if (has_exchange_shop_privilege(meta, player) and (listname ~= "cust_ej") and (listname ~= "custm_ej")) then
+		if (bitchange_has_access(meta:get_string("owner"), player:get_player_name()) and (listname ~= "cust_ej") and (listname ~= "custm_ej")) then
 			return stack:get_count()
 		end
 		return 0
 	end,
     allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if (has_exchange_shop_privilege(meta, player) or (listname == "cust_ej")) then
+		if (bitchange_has_access(meta:get_string("owner"), player:get_player_name()) or (listname == "cust_ej")) then
 			return stack:get_count()
 		end
 		return 0

@@ -43,11 +43,6 @@ minetest.register_on_shutdown(function()
 	save_exchange_rate()
 end)
 
-local function has_bank_privilege(meta, player)
-	local player_name = player:get_player_name()
-	return ((player_name == meta:get_string("owner")) or minetest.get_player_privs(player_name).server)
-end
-
 local function get_bank_formspec(number, pos)
 	local formspec = ""
 	local name = "nodemeta:"..pos.x..","..pos.y..","..pos.z
@@ -196,21 +191,21 @@ minetest.register_node("bitchange:bank", {
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
-		if(has_bank_privilege(meta, player)) then
+		if(bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return count
 		end
 		return 0
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if (has_bank_privilege(meta, player)) then
+		if (bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return stack:get_count()
 		end
 		return 0
 	end,
     allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if (has_bank_privilege(meta, player)) then
+		if (bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return stack:get_count()
 		end
 		return 0

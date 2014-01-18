@@ -2,10 +2,6 @@
 --   Something like a chest...experimental, have fun!
 --License: WTFPL
 
-function has_locked_chest_privilege(meta, player)
-	return (player:get_player_name() == meta:get_string("owner"))
-end
-
 function get_warehouse_tube_config(mode)
 	if(bitchange_warehouse_pipeworks) then
 		if(mode == 1) then
@@ -94,21 +90,21 @@ minetest.register_node("bitchange:warehouse", {
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
-		if not has_locked_chest_privilege(meta, player) then
+		if(not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return 0
 		end
 		return count
 	end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if not has_locked_chest_privilege(meta, player) then
+		if(not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return 0
 		end
 		return stack:get_count()
 	end,
     allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if not has_locked_chest_privilege(meta, player) then
+		if(not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
 			return 0
 		end
 		return stack:get_count()

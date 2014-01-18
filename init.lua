@@ -15,6 +15,9 @@ end
 if(bitchange_enable_warehouse) then
 	dofile(mod_path.."/warehouse.lua")
 end
+if(bitchange_enable_toolrepair) then
+	dofile(mod_path.."/toolrepair.lua")
+end
 if(bitchange_enable_bank) then
 	local loaded_bank = ""
 	if(minetest.get_modpath("money") ~= nil) then
@@ -38,4 +41,11 @@ if(not minetest.setting_getbool("creative_mode") and bitchange_initial_give > 0)
 		player:get_inventory():add_item("main", "bitchange:mineninth "..bitchange_initial_give)
 	end)
 end
+
+-- Privs
+minetest.register_privilege("bitchange", "Can access to owned nodes of the bitchange mod")
+function bitchange_has_access(owner, player_name)
+	return (player_name == owner or minetest.get_player_privs(player_name).server or minetest.get_player_privs(player_name).bitchange)
+end
+
 print("[BitChange] Loaded.")

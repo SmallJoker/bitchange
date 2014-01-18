@@ -6,6 +6,7 @@ bitchange_initial_give			=	2
 bitchange_enable_exchangeshop	=	true
 bitchange_enable_moneychanger	=	true
 bitchange_enable_warehouse		=	false
+bitchange_enable_toolrepair		=	true
 
 -- Set this variable to false if you have a supported currency enabled
 --  and if you want to disable the exchanging/converting point - the bank
