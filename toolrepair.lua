@@ -125,10 +125,10 @@ minetest.register_abm({
 			return
 		end
 		
-		if(wear - 2000 < 0) then
-			src:add_wear(-2000 + wear)
+		if(wear - 4000 < 0) then
+			src:add_wear(-4000 + wear)
 		else
-			src:add_wear(-2000)
+			src:add_wear(-4000)
 		end
 		inv:set_stack("src", 1, src)
 		set_infotext(meta, 2)
