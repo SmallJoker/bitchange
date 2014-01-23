@@ -11,7 +11,9 @@
 	-> Enable something: Open 'config.txt' with your editor and modify it
 	-> See crafts: get an extention for your inventory or browse through the codes
 	-> Power the tool repair: insert damaged tool in the first box and someminecoins intothe 2nd, then wait.
-
+	-> Set up the bank: use [E + right click] to see the reserve of the current bank, then put some MineCoins in there
+		and if you are using the curreny mod, then also put 1-MineGelt notes inside.
+	
 ==> Add special access to nodes, how?
 	-> Exchange shop: open 'shop.lua' and edit the function 'has_exchange_shop_privilege',
 		return 'true' to grant access to the contents, return 'false' to disallow

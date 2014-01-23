@@ -3,7 +3,7 @@
 --License: WTFPL
 
 local file_path = minetest.get_worldpath() .. "/bitchange_bank_currency"
-local exchange_worth = 15 -- default worth in "money" for one MineCoin, change if not okay
+local exchange_worth = 8 -- default worth in "money" for 10 MineCoins, change if not okay
 local bank = {}
 local changes_made = false
 
@@ -84,7 +84,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		local geld_stack = "currency:minegeld "
 		local err_msg = ""
 		if(fields.buy10) then
-			geld_stack = geld_stack..(round(exchange_worth * 0.995, 1) * 10)
+			geld_stack = geld_stack..(round(exchange_worth * 0.995, 1))
 			if(not player_inv:contains_item("main", coin_stack)) then
 				err_msg = "You do not have the needed MineCoins."
 			end
@@ -105,7 +105,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 			end
 			if(err_msg == "") then
 				exchange_worth = exchange_worth * 0.995
-				local price = round(exchange_worth - 0.01, 1) * 10
+				local price = round(exchange_worth - 0.01, 1)
 				bank_inv:remove_item("coins", geld_stack)
 				player_inv:add_item("main", geld_stack)
 				player_inv:remove_item("main", coin_stack)
@@ -114,8 +114,8 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 				err_msg = "Sold 10 MineCoins for "..price.." MineGeld"
 			end
 		elseif(fields.sell10) then
-			local price = round(exchange_worth, 1) * 10
-			geld_stack = geld_stack..(round(exchange_worth, 1) * 10)
+			local price = round(exchange_worth, 1)
+			geld_stack = geld_stack..price)
 			if(not player_inv:contains_item("main", geld_stack)) then
 				err_msg = "You do not have the required money. ("..price.." x 1 MineGeld pieces)"
 			end

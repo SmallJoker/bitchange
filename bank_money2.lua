@@ -3,7 +3,7 @@
 --License: WTFPL
 
 local file_path = minetest.get_worldpath() .. "/bitchange_bank_money2"
-local exchange_worth = 100.0 -- default worth in "cr" for one MineCoin, change if not okay
+local exchange_worth = 70.0 -- default worth in "cr" for one MineCoin, change if not okay
 local bank = {}
 local changes_made = false
 
