@@ -1,6 +1,10 @@
 --Created by Krock for the BitChange mod
 local mod_path = minetest.get_modpath("bitchange")
 
+if freeminer then
+	minetest = freeminer
+end
+
 dofile(mod_path.."/config.txt")
 dofile(mod_path.."/minecoins.lua")
 if(bitchange_use_moreores_tin or bitchange_use_technic_zinc or bitchange_use_gold) then
