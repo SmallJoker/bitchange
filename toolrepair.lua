@@ -24,8 +24,10 @@ local function set_infotext(meta, mode)
 	
 	local formspec =
 		"size[8,9]"..
+		"label[1,1;Damaged tool:]]"..
 		"list[current_name;src;3.5,1;1,1;]"..
 		"label[3.4,2;\\["..text2.."\\]]"..
+		"label[1.5,3;MineNinth:]]"..
 		"list[current_name;fuel;3.5,3;1,1;]"..
 		"list[current_player;main;0,5;8,4;]"
 	meta:set_string("formspec", formspec)
@@ -69,7 +71,7 @@ minetest.register_node("bitchange:toolrepair", {
 				return 1
 			end
 		elseif(listname == "fuel") then
-			if(stack:get_name() == "bitchange:minecoin") then
+			if(stack:get_name() == "bitchange:mineninth") then
 				return stack:get_count()
 			end
 		end
@@ -103,16 +105,17 @@ minetest.register_craft({
 
 minetest.register_abm({
 	nodenames = {"bitchange:toolrepair"},
-	interval = 8,
+	interval = 5,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		local src = inv:get_stack("src", 1)
 		local wear = src:get_wear()
+		local repair = -1400
 		
 		if(src:is_empty() 
-			or wear == 0 
+			or wear == 0
 			or wear == 65535
 			or src:get_name() == "technic:water_can"
 			or src:get_name() == "technic:lava_can") then
@@ -120,18 +123,18 @@ minetest.register_abm({
 			return
 		end
 		local fuel = inv:get_stack("fuel", 1)
-		if(fuel:is_empty() or fuel:get_name() ~= "bitchange:minecoin") then
+		if(fuel:is_empty() or fuel:get_name() ~= "bitchange:mineninth") then
 			set_infotext(meta, 1)
 			return
 		end
 		
-		if(wear - 4000 < 0) then
-			src:add_wear(-4000 + wear)
+		if(wear + repair < 0) then
+			src:add_wear(repair + wear)
 		else
-			src:add_wear(-4000)
+			src:add_wear(repair)
 		end
 		inv:set_stack("src", 1, src)
 		set_infotext(meta, 2)
-		inv:remove_item("fuel", "bitchange:minecoin 1")
+		inv:remove_item("fuel", "bitchange:mineninth 1")
 	end
 })

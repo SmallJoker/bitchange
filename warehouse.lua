@@ -111,6 +111,9 @@ minetest.register_node("bitchange:warehouse", {
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		local meta = minetest.get_meta(pos)
+		if(not bitchange_has_access(meta:get_string("owner"), sender:get_player_name())) then
+			return
+		end
 		if(fields.inv_lv1) then
 			meta:set_string("formspec", "size[12,10;]"..
 				"label[0,0;Warehouse]"..
