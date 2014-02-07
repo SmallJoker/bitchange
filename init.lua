@@ -1,11 +1,29 @@
 --Created by Krock for the BitChange mod
 local mod_path = minetest.get_modpath("bitchange")
+local world_path = minetest.get_worldpath()
 
 if freeminer then
 	minetest = freeminer
 end
 
-dofile(mod_path.."/config.txt")
+dofile(mod_path.."/config.default.txt")
+-- Copied from moretrees mod
+if io.open(world_path.."/bitchange_config.txt","r") == nil then
+	io.input(mod_path.."/config.default.txt")
+	io.output(world_path.."/bitchange_config.txt")
+	
+	while true do
+		local block = io.read(256) -- 256B at once
+		if not block then
+			io.close()
+			break
+		end
+		io.write(block)
+	end
+else
+	dofile(world_path.."/bitchange_config.txt")
+end
+
 dofile(mod_path.."/minecoins.lua")
 if(bitchange_use_moreores_tin or bitchange_use_technic_zinc or bitchange_use_gold) then
 	dofile(mod_path.."/moreores.lua")
