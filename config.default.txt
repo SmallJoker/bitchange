@@ -11,7 +11,7 @@ bitchange_enable_toolrepair		=	true
 -- Set this variable to false if you have a supported currency enabled
 --  and if you want to disable the exchanging/converting point - the bank
 -- Supported: money (by kotolegokot), money2 (by Bad Command), currency (by Dan Duncombe)
-bitchange_enable_bank			=	true
+bitchange_enable_bank			=	false
 
 -- Converting other ores to MineCoins
 -- Tin		moreores
