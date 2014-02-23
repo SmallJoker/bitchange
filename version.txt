@@ -1,3 +1,8 @@
+======>- Version 1.7.0 -<======
+- donation box
+- more money in money-ores
+- possible cheating fixes
+
 ======>- Version 1.6.9 -<======
 - optional quartz converting support
 - some other little changes (also in the configuration)

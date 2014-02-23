@@ -155,6 +155,11 @@ minetest.register_node("bitchange:moneychanger", {
 		end
 		if(listname == "source") then
 			local stack_name = stack:get_name()
+			local inv = meta:get_inventory()
+			local inv_stack = inv:get_stack(listname, index)
+			if(inv_stack:get_name() ~= "") then
+				return 0
+			end
 			if(stack_name == "bitchange:mineninth" or stack_name == "bitchange:minecoin" or stack_name == "bitchange:minecoinblock") then
 				return moneychanger.update_fields(pos, listname, index, stack, false)
 			end

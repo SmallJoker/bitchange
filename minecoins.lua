@@ -9,7 +9,13 @@ minetest.register_node("bitchange:minecoin_in_ground", {
 	is_ground_content = true,
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults(),
-	drop = 'bitchange:minecoin',
+	drop = {
+		max_items = 2,
+		items = {
+			{items = {"bitchange:minecoin"}, rarity = 2 },
+			{items = {"bitchange:minecoin 3"} }
+		}
+	},
 })
 
 minetest.register_node("bitchange:mineninth_in_ground", {
@@ -18,7 +24,14 @@ minetest.register_node("bitchange:mineninth_in_ground", {
 	is_ground_content = true,
 	groups = {cracky=3},
 	sounds = default.node_sound_stone_defaults(),
-	drop = 'bitchange:coinbase',
+	drop = {
+		max_items = 3,
+		items = {
+			{items = {"bitchange:coinbase"}, rarity = 5 },
+			{items = {"bitchange:coinbase 2"}, rarity = 3 },
+			{items = {"bitchange:coinbase 6"} }
+		}
+	},
 })
 
 minetest.register_node("bitchange:minecoinblock", {

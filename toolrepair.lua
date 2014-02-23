@@ -24,7 +24,7 @@ local function set_infotext(meta, mode)
 	
 	local formspec =
 		"size[8,9]"..
-		"label[1,1;Damaged tool:]]"..
+		"label[1,1;Damaged tool:]"..
 		"list[current_name;src;3.5,1;1,1;]"..
 		"label[3.4,2;\\["..text2.."\\]]"..
 		"label[1.5,3;MineNinth:]]"..

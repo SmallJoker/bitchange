@@ -90,6 +90,9 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		local meta = minetest.get_meta(pos)
 		local title = meta:get_string("title") or ""
 		local shop_owner = meta:get_string("owner")
+		if(fields.quit) then
+			exchange_shop[player_name] = nil
+		end
 		
 		if(fields.exchange) then
 			local player_inv = sender:get_inventory()

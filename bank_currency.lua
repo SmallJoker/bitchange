@@ -3,7 +3,7 @@
 --License: WTFPL
 
 local file_path = minetest.get_worldpath() .. "/bitchange_bank_currency"
-local exchange_worth = 12 -- default worth in "money" for 10 MineCoins, change if not okay
+local exchange_worth = 8 -- default worth in "money" for 10 MineCoins, change if not okay
 local bank = {}
 local changes_made = false
 
@@ -60,7 +60,7 @@ local function get_bank_formspec(number, pos)
 		-- owner
 		formspec = ("size[8,9;]"..
 				"label[0,0;Bank]"..
-				"label[1,0.5;Current MineCoin and MineGelt reserve: (Editable by owner)]"..
+				"label[1,0.5;Current MineCoin and MineGeld reserve: (Editable by owner)]"..
 				"list["..name..";coins;0,1;8,3;]"..
 				"list[current_player;main;0,5;8,4;]")
 	end

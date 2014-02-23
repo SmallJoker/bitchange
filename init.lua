@@ -40,6 +40,9 @@ end
 if(bitchange_enable_toolrepair) then
 	dofile(mod_path.."/toolrepair.lua")
 end
+if(bitchange_enable_donationbox) then
+	dofile(mod_path.."/donationbox.lua")
+end
 if(bitchange_enable_bank) then
 	local loaded_bank = ""
 	if(minetest.get_modpath("money") ~= nil) then
@@ -67,7 +70,7 @@ end
 -- Privs
 minetest.register_privilege("bitchange", "Can access to owned nodes of the bitchange mod")
 function bitchange_has_access(owner, player_name)
-	return (player_name == owner or minetest.get_player_privs(player_name).server or minetest.get_player_privs(player_name).bitchange)
+	return (player_name == owner or owner == "" or minetest.get_player_privs(player_name).server or minetest.get_player_privs(player_name).bitchange)
 end
 
 print("[BitChange] Loaded.")
