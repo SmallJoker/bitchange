@@ -34,13 +34,16 @@ minetest.register_globalstep(function(t)
                 return
         end
 		if(changes_made) then
+			changes_made = false
 			save_exchange_rate()
 		end
 		ttime = 0
 end)
 
 minetest.register_on_shutdown(function() 
-	save_exchange_rate()
+	if(changes_made) then
+		save_exchange_rate()
+	end
 end)
 
 local function get_bank_formspec(number, pos)
