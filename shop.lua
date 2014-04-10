@@ -14,29 +14,32 @@ local function get_exchange_shop_formspec(number,pos,title)
 				"label[0,0;Exchange shop]"..
 				"label[1,0.5;Owner needs:]"..
 				"list["..name..";cust_ow;1,1;2,2;]"..
-				"button[3,2.5;2,1;exchange;Exchange]"..
+				"button[3,2.4;2,1;exchange;Exchange]"..
 				"label[5,0.5;Owner gives:]"..
 				"list["..name..";cust_og;5,1;2,2;]"..
-				"label[1,3.5;Ejected items:]"..
+				"label[0.7,3.5;Ejected items:]"..
+				"label[0.7,3.8;(Remove me!)]"..
 				"list["..name..";cust_ej;3,3.5;4,1;]"..
 				"list[current_player;main;0,5;8,4;]")
 	elseif(number == 2 or number == 3) then
 		-- owner
 		formspec = ("size[11,10;]"..
-				"label[0,0;Exchange shop]"..
-				"field[2.5,0.5;3,0.2;title;;"..title.."]"..
+				"label[0.2,0.1;Title:]"..
+				"field[1.5,0.5;3,0.5;title;;"..title.."]"..
+				"button[4,0.2;1,0.5;set_title;Set]"..
 				"label[0,0.7;You need:]"..
 				"list["..name..";cust_ow;0,1.2;2,2;]"..
 				"label[3,0.7;You give:]"..
 				"list["..name..";cust_og;3,1.2;2,2;]"..
-				"label[1,3.5;Ejected items:]"..
+				"label[0.3,3.5;Ejected items: (Remove me!)]"..
 				"list["..name..";custm_ej;0,4;4,1;]"..
-				"label[6,0;You are viewing:]")
+				"label[6,0;You are viewing:]"..
+				"label[6,0.3;(Click to switch)]")
 		if(number == 2) then
-			formspec = (formspec.."button[8.5,0;2.5,1;vstock;Customers stock]"..
+			formspec = (formspec.."button[8.5,0.2;2.5,0.5;vstock;Customers stock]"..
 				"list["..name..";custm;6,1;5,4;]")
 		else
-			formspec = (formspec.."button[8.5,0;2.5,1;vcustm;Your stock]"..
+			formspec = (formspec.."button[8.5,0.2;2.5,0.5;vcustm;Your stock]"..
 				"list["..name..";stock;6,1;5,4;]")
 		end
 		formspec = (formspec..
@@ -92,11 +95,29 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		local shop_owner = meta:get_string("owner")
 		if(fields.quit) then
 			exchange_shop[player_name] = nil
+			return
+		end
+		
+		if(fields.set_title) then
+			if(fields.title and title ~= fields.title) then
+				if(fields.title ~= "") then
+					meta:set_string("infotext", "'"..fields.title.."' (owned by "..shop_owner..")")
+				else
+					meta:set_string("infotext", "Exchange shop (owned by "..shop_owner..")")
+				end
+				meta:set_string("title", fields.title)
+			end
 		end
 		
 		if(fields.exchange) then
-			local player_inv = sender:get_inventory()
 			local shop_inv = meta:get_inventory()
+			if shop_inv:is_empty("cust_ow") and shop_inv:is_empty("cust_og") then
+				return
+			end
+			if not shop_inv:is_empty("cust_ej") or not shop_inv:is_empty("custm_ej") then
+				minetest.chat_send_player(player_name, "Exchange shop: Error, ejected items detected!")
+			end
+			local player_inv = sender:get_inventory()
 			local err_msg = ""
 			local cust_ow = shop_inv:get_list("cust_ow")
 			local cust_og = shop_inv:get_list("cust_og")
@@ -212,17 +233,6 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 			minetest.show_formspec(sender:get_player_name(),"bitchange:shop_formspec",get_exchange_shop_formspec(3, pos, title))
 		elseif(fields.vcustm and bitchange_has_access(shop_owner, player_name) and not fields.quit) then
 			minetest.show_formspec(sender:get_player_name(),"bitchange:shop_formspec",get_exchange_shop_formspec(2, pos, title))
-		elseif(fields.quit and bitchange_has_access(shop_owner, player_name)) then
-			if(fields.title and title ~= fields.title) then
-				if(fields.title ~= "") then
-					meta:set_string("infotext", "Exchange shop \""..fields.title.."\" (owned by "..
-						meta:get_string("owner")..")")
-				else
-					meta:set_string("infotext", "Exchange shop (owned by "..
-						meta:get_string("owner")..")")
-				end
-				meta:set_string("title", fields.title)
-			end
 		end
 	end
 end)
