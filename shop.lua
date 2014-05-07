@@ -87,153 +87,154 @@ local function get_exchange_shop_tube_config(mode)
 end
 
 minetest.register_on_player_receive_fields(function(sender, formname, fields)
-	if (formname == "bitchange:shop_formspec") then
-		local player_name = sender:get_player_name()
-		local pos = exchange_shop[player_name]
-		local meta = minetest.get_meta(pos)
-		local title = meta:get_string("title") or ""
-		local shop_owner = meta:get_string("owner")
-		if(fields.quit) then
-			exchange_shop[player_name] = nil
+	if (formname ~= "bitchange:shop_formspec") then
+		return
+	end
+	local player_name = sender:get_player_name()
+	local pos = exchange_shop[player_name]
+	local meta = minetest.get_meta(pos)
+	local title = meta:get_string("title") or ""
+	local shop_owner = meta:get_string("owner")
+	if(fields.quit) then
+		exchange_shop[player_name] = nil
+		return
+	end
+	
+	if(fields.set_title) then
+		if(fields.title and title ~= fields.title) then
+			if(fields.title ~= "") then
+				meta:set_string("infotext", "'"..fields.title.."' (owned by "..shop_owner..")")
+			else
+				meta:set_string("infotext", "Exchange shop (owned by "..shop_owner..")")
+			end
+			meta:set_string("title", fields.title)
+		end
+	end
+	
+	if(fields.exchange) then
+		local shop_inv = meta:get_inventory()
+		if shop_inv:is_empty("cust_ow") and shop_inv:is_empty("cust_og") then
 			return
 		end
-		
-		if(fields.set_title) then
-			if(fields.title and title ~= fields.title) then
-				if(fields.title ~= "") then
-					meta:set_string("infotext", "'"..fields.title.."' (owned by "..shop_owner..")")
-				else
-					meta:set_string("infotext", "Exchange shop (owned by "..shop_owner..")")
-				end
-				meta:set_string("title", fields.title)
-			end
+		if not shop_inv:is_empty("cust_ej") or not shop_inv:is_empty("custm_ej") then
+			minetest.chat_send_player(player_name, "Exchange shop: Error, ejected items detected!")
 		end
-		
-		if(fields.exchange) then
-			local shop_inv = meta:get_inventory()
-			if shop_inv:is_empty("cust_ow") and shop_inv:is_empty("cust_og") then
-				return
-			end
-			if not shop_inv:is_empty("cust_ej") or not shop_inv:is_empty("custm_ej") then
-				minetest.chat_send_player(player_name, "Exchange shop: Error, ejected items detected!")
-			end
-			local player_inv = sender:get_inventory()
-			local err_msg = ""
-			local cust_ow = shop_inv:get_list("cust_ow")
-			local cust_og = shop_inv:get_list("cust_og")
-			local cust_ow_legal = true
-			local cust_og_legal = true
-			--?shop configured well
-			for i1, item1 in pairs(cust_ow) do
-				for i2, item2 in pairs(cust_ow) do
-					if (item1:get_name() == item2:get_name() and i1 ~= i2 and item1:get_name() ~= "") then
-						cust_ow_legal = false
-						--break
-					end
-				end
-				if(not cust_ow_legal) then
-					break
+		local player_inv = sender:get_inventory()
+		local err_msg = ""
+		local cust_ow = shop_inv:get_list("cust_ow")
+		local cust_og = shop_inv:get_list("cust_og")
+		local cust_ow_legal = true
+		local cust_og_legal = true
+		--?shop configured well
+		for i1, item1 in pairs(cust_ow) do
+			for i2, item2 in pairs(cust_ow) do
+				if (item1:get_name() == item2:get_name() and i1 ~= i2 and item1:get_name() ~= "") then
+					cust_ow_legal = false
+					--break
 				end
 			end
 			if(not cust_ow_legal) then
-				err_msg = "The 'Owner needs' field can not contain multiple times the same items, contact the shop owner."
+				break
 			end
-			if(err_msg == "") then --?shop configured well
-				for i1, item1 in pairs(cust_og) do
-					for i2, item2 in pairs(cust_og) do
-						if (item1:get_name() == item2:get_name() and i1 ~= i2 and item1:get_name() ~= "") then
-							cust_og_legal = false
-							break
-						end
-					end
-					if(not cust_og_legal) then
+		end
+		if(not cust_ow_legal) then
+			err_msg = "The 'Owner needs' field can not contain multiple times the same items, contact the shop owner."
+		end
+		if(err_msg == "") then --?shop configured well
+			for i1, item1 in pairs(cust_og) do
+				for i2, item2 in pairs(cust_og) do
+					if (item1:get_name() == item2:get_name() and i1 ~= i2 and item1:get_name() ~= "") then
+						cust_og_legal = false
 						break
 					end
 				end
 				if(not cust_og_legal) then
-					err_msg = "The 'Owner gives' field can not contain multiple times the same items, contact the shop owner."
+					break
 				end
 			end
-			if(err_msg == "") then --?player has space
-				local player_has_space = true
-				for i, item in pairs(cust_og) do
-					if (not player_inv:room_for_item("main",item)) then
-						player_has_space = false
-						break
-					end
-				end
-				if(not player_has_space) then
-					err_msg = "You do not have the space in your inventory."
-				end
+			if(not cust_og_legal) then
+				err_msg = "The 'Owner gives' field can not contain multiple times the same items, contact the shop owner."
 			end
-			if(err_msg == "") then --?player has items
-				local player_has_items = true
-				for i, item in pairs(cust_ow) do
-					if (not player_inv:contains_item("main",item)) then
-						player_has_items = false
-						break
-					end
-				end
-				if(not player_has_items) then
-					err_msg = "You do not have the needed items."
-				end
-			end
-			if(err_msg == "") then --?shop has space
-				local shop_has_space = true
-				for i, item in pairs(cust_ow) do
-					if (not shop_inv:room_for_item("custm",item)) then
-						shop_has_space = false
-						break
-					end
-				end
-				if(not shop_has_space) then
-					err_msg = "Exchange shop: The stock in the shop is full."
-				end
-			end
-			if(err_msg == "") then --?shop has items
-				local shop_has_items = true
-				for i, item in pairs(cust_og) do
-					if (not shop_inv:contains_item("stock",item)) then
-						shop_has_items = false
-						break
-					end
-				end
-				if(not shop_has_items) then
-					err_msg = "The shop is empty and can not give you anything."
-				end
-			end
-			if(err_msg == "") then --?exchange
-				local fully_exchanged = true
-				for i, item in pairs(cust_ow) do
-					player_inv:remove_item("main", item) --player inv. to stock else to eject fields
-					if (shop_inv:room_for_item("custm",item)) then
-						shop_inv:add_item("custm", item)
-					else
-						shop_inv:add_item("custm_ej", item)
-						fully_exchanged = false
-					end
-				end
-				for i, item in pairs(cust_og) do
-					shop_inv:remove_item("stock", item) --stock to player inv. else to eject fields
-					if (player_inv:room_for_item("main",item)) then
-						player_inv:add_item("main", item)
-					else
-						shop_inv:add_item("cust_ej", item)
-						fully_exchanged = false
-					end
-				end
-				if(not fully_exchanged) then
-					err_msg = "Fatal error! Stocks are overflowing somewhere!"
-				end
-			end
-			if(err_msg ~= "") then
-				minetest.chat_send_player(player_name, "Exchange shop: "..err_msg)
-			end
-		elseif(fields.vstock and bitchange_has_access(shop_owner, player_name) and not fields.quit) then
-			minetest.show_formspec(sender:get_player_name(),"bitchange:shop_formspec",get_exchange_shop_formspec(3, pos, title))
-		elseif(fields.vcustm and bitchange_has_access(shop_owner, player_name) and not fields.quit) then
-			minetest.show_formspec(sender:get_player_name(),"bitchange:shop_formspec",get_exchange_shop_formspec(2, pos, title))
 		end
+		if(err_msg == "") then --?shop has space
+			local shop_has_space = true
+			for i, item in pairs(cust_ow) do
+				if (not shop_inv:room_for_item("custm",item)) then
+					shop_has_space = false
+					break
+				end
+			end
+			if(not shop_has_space) then
+				err_msg = "The stock in the shop is full."
+			end
+		end
+		if(err_msg == "") then --?shop has items
+			local shop_has_items = true
+			for i, item in pairs(cust_og) do
+				if (not shop_inv:contains_item("stock",item)) then
+					shop_has_items = false
+					break
+				end
+			end
+			if(not shop_has_items) then
+				err_msg = "The shop is empty and can not give you anything."
+			end
+		end
+		if(err_msg == "") then --?player has space
+			local player_has_space = true
+			for i, item in pairs(cust_og) do
+				if (not player_inv:room_for_item("main",item)) then
+					player_has_space = false
+					break
+				end
+			end
+			if(not player_has_space) then
+				err_msg = "You do not have the space in your inventory."
+			end
+		end
+		if(err_msg == "") then --?player has items
+			local player_has_items = true
+			for i, item in pairs(cust_ow) do
+				if (not player_inv:contains_item("main",item)) then
+					player_has_items = false
+					break
+				end
+			end
+			if(not player_has_items) then
+				err_msg = "You do not have the needed items."
+			end
+		end
+		if(err_msg == "") then --?exchange
+			local fully_exchanged = true
+			for i, item in pairs(cust_ow) do
+				player_inv:remove_item("main", item) --player inv. to stock else to eject fields
+				if (shop_inv:room_for_item("custm",item)) then
+					shop_inv:add_item("custm", item)
+				else
+					shop_inv:add_item("custm_ej", item)
+					fully_exchanged = false
+				end
+			end
+			for i, item in pairs(cust_og) do
+				shop_inv:remove_item("stock", item) --stock to player inv. else to eject fields
+				if (player_inv:room_for_item("main",item)) then
+					player_inv:add_item("main", item)
+				else
+					shop_inv:add_item("cust_ej", item)
+					fully_exchanged = false
+				end
+			end
+			if(not fully_exchanged) then
+				err_msg = "Fatal error! Stocks are overflowing somewhere!"
+			end
+		end
+		if(err_msg ~= "") then
+			minetest.chat_send_player(player_name, "Exchange shop: "..err_msg)
+		end
+	elseif(fields.vstock and bitchange_has_access(shop_owner, player_name) and not fields.quit) then
+		minetest.show_formspec(sender:get_player_name(),"bitchange:shop_formspec",get_exchange_shop_formspec(3, pos, title))
+	elseif(fields.vcustm and bitchange_has_access(shop_owner, player_name) and not fields.quit) then
+		minetest.show_formspec(sender:get_player_name(),"bitchange:shop_formspec",get_exchange_shop_formspec(2, pos, title))
 	end
 end)
 
@@ -268,7 +269,9 @@ minetest.register_node("bitchange:shop", {
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
-		if(inv:is_empty("stock") and inv:is_empty("custm") and inv:is_empty("custm_ej") and inv:is_empty("cust_ow") and inv:is_empty("cust_og") and inv:is_empty("cust_ej")) then
+		if(inv:is_empty("stock") and inv:is_empty("custm") and 
+			inv:is_empty("custm_ej") and inv:is_empty("cust_ow") and 
+			inv:is_empty("cust_og") and inv:is_empty("cust_ej")) then
 			return true
 		else
 			minetest.chat_send_player(player:get_player_name(), "Can not dig exchange shop, one or multiple stocks are in use.")
@@ -289,16 +292,23 @@ minetest.register_node("bitchange:shop", {
 		else
 			view = 1
 		end
-		minetest.show_formspec(player_name,"bitchange:shop_formspec",get_exchange_shop_formspec(view, pos, meta:get_string("title")))
+		minetest.show_formspec(player_name, "bitchange:shop_formspec", get_exchange_shop_formspec(view, pos, meta:get_string("title")))
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
-		if (not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
-			return 0
+		if bitchange_has_access(meta:get_string("owner"), player:get_player_name()) then
+			return count
 		end
-		return count
+		return 0
 	end,
     allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+		if player:get_player_name() == ":pipeworks" then
+			return stack:get_count()
+		end
+		if listname == "custm" then
+			minetest.chat_send_player(player:get_player_name(), "Exchange shop: Please press 'Customers stock' and insert your items there.")
+			return 0
+		end
 		local meta = minetest.get_meta(pos)
 		if (bitchange_has_access(meta:get_string("owner"), player:get_player_name()) and (listname ~= "cust_ej") and (listname ~= "custm_ej")) then
 			return stack:get_count()
@@ -306,6 +316,9 @@ minetest.register_node("bitchange:shop", {
 		return 0
 	end,
     allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		if player:get_player_name() == ":pipeworks" then
+			return stack:get_count()
+		end
 		local meta = minetest.get_meta(pos)
 		if (bitchange_has_access(meta:get_string("owner"), player:get_player_name()) or (listname == "cust_ej")) then
 			return stack:get_count()
