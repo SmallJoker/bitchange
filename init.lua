@@ -1,15 +1,16 @@
 --Created by Krock for the BitChange mod
-local mod_path = minetest.get_modpath("bitchange")
+bitchange = {}
+bitchange.mod_path = minetest.get_modpath("bitchange")
 local world_path = minetest.get_worldpath()
 
 if freeminer then
 	minetest = freeminer
 end
 
-dofile(mod_path.."/config.default.txt")
+dofile(bitchange.mod_path.."/config.default.txt")
 -- Copied from moretrees mod
-if io.open(world_path.."/bitchange_config.txt","r") == nil then
-	io.input(mod_path.."/config.default.txt")
+if not io.open(world_path.."/bitchange_config.txt", "r") then
+	io.input(bitchange.mod_path.."/config.default.txt")
 	io.output(world_path.."/bitchange_config.txt")
 	
 	while true do
@@ -24,43 +25,40 @@ else
 	dofile(world_path.."/bitchange_config.txt")
 end
 
-dofile(mod_path.."/minecoins.lua")
-if(bitchange_use_moreores_tin or bitchange_use_technic_zinc or bitchange_use_gold) then
-	dofile(mod_path.."/moreores.lua")
+dofile(bitchange.mod_path.."/minecoins.lua")
+dofile(bitchange.mod_path.."/moreores.lua")
+if bitchange_enable_exchangeshop then
+	dofile(bitchange.mod_path.."/shop.lua")
 end
-if(bitchange_enable_exchangeshop) then
-	dofile(mod_path.."/shop.lua")
+if bitchange_enable_moneychanger then
+	dofile(bitchange.mod_path.."/moneychanger.lua")
 end
-if(bitchange_enable_moneychanger) then
-	dofile(mod_path.."/moneychanger.lua")
+if bitchange_enable_warehouse then
+	dofile(bitchange.mod_path.."/warehouse.lua")
 end
-if(bitchange_enable_warehouse) then
-	dofile(mod_path.."/warehouse.lua")
+if bitchange_enable_toolrepair then
+	dofile(bitchange.mod_path.."/toolrepair.lua")
 end
-if(bitchange_enable_toolrepair) then
-	dofile(mod_path.."/toolrepair.lua")
+if bitchange_enable_donationbox then
+	dofile(bitchange.mod_path.."/donationbox.lua")
 end
-if(bitchange_enable_donationbox) then
-	dofile(mod_path.."/donationbox.lua")
-end
-if(bitchange_enable_bank) then
-	local loaded_bank = ""
-	if(minetest.get_modpath("money") ~= nil) then
-		loaded_bank = "money"
-		dofile(mod_path.."/bank_"..loaded_bank..".lua")
-	elseif(minetest.get_modpath("money2") ~= nil) then
-		loaded_bank = "money2"
-		dofile(mod_path.."/bank_"..loaded_bank..".lua")
-	elseif(minetest.get_modpath("currency") ~= nil) then
-		loaded_bank = "currency"
-		dofile(mod_path.."/bank_"..loaded_bank..".lua")
+if bitchange_enable_bank then
+	local loaded_bank = false
+	for i, v in ipairs({"money", "money2", "currency"}) do
+		if minetest.get_modpath(v) then
+			loaded_bank = v
+			break
+		end
 	end
-	if(loaded_bank ~= "") then
+	if loaded_bank then
+		dofile(bitchange.mod_path.."/bank.lua")
+		bitchange.bank.file_path = world_path.."/bitchange_bank_"..loaded_bank
+		dofile(bitchange.mod_path.."/bank_"..loaded_bank..".lua")
 		print("[BitChange] Bank loaded: "..loaded_bank)
 	end
 end
 
-if(not minetest.setting_getbool("creative_mode") and bitchange_initial_give > 0) then
+if not minetest.setting_getbool("creative_mode") and bitchange_initial_give > 0 then
 	-- Giving initial money
 	minetest.register_on_newplayer(function(player)
 		player:get_inventory():add_item("main", "bitchange:mineninth "..bitchange_initial_give)
