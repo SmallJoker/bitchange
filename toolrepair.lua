@@ -2,20 +2,20 @@
 --License: WTFPL
 
 local function set_infotext(meta, mode)
-	if(mode == meta:get_int("state")) then
+	if mode == meta:get_int("state") then
 		return
 	end
 	local owner = meta:get_string("owner")
 	local text = "Tool Repair "
 	local text2 = "[Inactive]"
-	if(mode == 0) then
+	if mode == 0 then
 		text = text.."(constructing)"
-	elseif(mode == 1) then
+	elseif mode == 1 then
 		text2 = "Inactive"
-	elseif(mode == 2) then
+	elseif mode == 2 then
 		text2 = "Active"
 	end
-	if(mode ~= 0) then
+	if mode ~= 0 then
 		 text = text.."["..text2.."] (owned by "..owner..")"
 	end
 	
@@ -59,19 +59,19 @@ minetest.register_node("bitchange:toolrepair", {
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if(player:get_player_name() ~= meta:get_string("owner")) then
+		if player:get_player_name() ~= meta:get_string("owner") then
 			return 0
 		end
 		
-		if(listname == "src") then
+		if listname == "src" then
 			if(stack:get_wear() > 0
 				and stack:get_wear() < 65535
 				and stack:get_name() ~= "technic:water_can"
 				and stack:get_name() ~= "technic:lava_can") then
 				return 1
 			end
-		elseif(listname == "fuel") then
-			if(stack:get_name() == "bitchange:mineninth") then
+		elseif listname == "fuel" then
+			if stack:get_name() == "bitchange:mineninth" then
 				return stack:get_count()
 			end
 		end
@@ -79,7 +79,7 @@ minetest.register_node("bitchange:toolrepair", {
 	end,
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if(bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return stack:get_count()
 		end
 		return 0
@@ -87,7 +87,7 @@ minetest.register_node("bitchange:toolrepair", {
 	can_dig = function(pos, player)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
-		if(bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return inv:is_empty("src") and inv:is_empty("fuel")
 		end
 		return 0
@@ -95,11 +95,11 @@ minetest.register_node("bitchange:toolrepair", {
 })
 
 minetest.register_craft({
-	output = 'bitchange:toolrepair',
+	output = "bitchange:toolrepair",
 	recipe = {
-		{'default:steel_ingot', 'default:stick', 'default:steel_ingot'},
-		{'default:jungletree', 'default:mese_crystal', 'default:jungletree'},
-		{'default:jungletree', 'bitchange:minecoinblock', 'default:jungletree'}
+		{"default:steel_ingot", "default:stick", "default:steel_ingot"},
+		{"default:jungletree", "default:mese_crystal", "default:jungletree"},
+		{"default:jungletree", "bitchange:minecoinblock", "default:jungletree"}
 	}
 })
 

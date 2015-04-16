@@ -40,19 +40,19 @@ minetest.register_node("bitchange:minecoinblock", {
 	is_ground_content = true,
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults(),
-    stack_max = 30000,
+	stack_max = 30000,
 })
 
 minetest.register_craftitem("bitchange:minecoin", {
 	description = "MineCoin",
 	inventory_image = "bitchange_minecoin.png",
-    stack_max = 30000,
+	stack_max = 30000,
 })
 
 minetest.register_craftitem("bitchange:mineninth", {
 	description = "MineNinth",
 	inventory_image = "bitchange_mineninth.png",
-    stack_max = 30000,
+	stack_max = 30000,
 })
 
 minetest.register_craftitem("bitchange:coinbase", {
@@ -62,56 +62,58 @@ minetest.register_craftitem("bitchange:coinbase", {
 
 -- Crafting
 minetest.register_craft({
-	output = 'bitchange:minecoinblock',
+	output = "bitchange:minecoinblock",
 	recipe = {
-		{'bitchange:minecoin', 'bitchange:minecoin', 'bitchange:minecoin'},
-		{'bitchange:minecoin', 'bitchange:minecoin', 'bitchange:minecoin'},
-		{'bitchange:minecoin', 'bitchange:minecoin', 'bitchange:minecoin'},
+		{"bitchange:minecoin", "bitchange:minecoin", "bitchange:minecoin"},
+		{"bitchange:minecoin", "bitchange:minecoin", "bitchange:minecoin"},
+		{"bitchange:minecoin", "bitchange:minecoin", "bitchange:minecoin"},
 	}
 })
 
 minetest.register_craft({
-	output = 'bitchange:minecoin 9',
+	output = "bitchange:minecoin 9",
 	recipe = {
-		{'bitchange:minecoinblock'},
+		{"bitchange:minecoinblock"},
 	}
 })
 
 minetest.register_craft({
-	output = 'bitchange:minecoin',
+	output = "bitchange:minecoin",
 	recipe = {
-		{'bitchange:mineninth', 'bitchange:mineninth', 'bitchange:mineninth'},
-		{'bitchange:mineninth', 'bitchange:mineninth', 'bitchange:mineninth'},
-		{'bitchange:mineninth', 'bitchange:mineninth', 'bitchange:mineninth'},
+		{"bitchange:mineninth", "bitchange:mineninth", "bitchange:mineninth"},
+		{"bitchange:mineninth", "bitchange:mineninth", "bitchange:mineninth"},
+		{"bitchange:mineninth", "bitchange:mineninth", "bitchange:mineninth"},
 	}
 })
 
 minetest.register_craft({
-	output = 'bitchange:mineninth 9',
+	output = "bitchange:mineninth 9",
 	recipe = {
-		{'bitchange:minecoin'},
+		{"bitchange:minecoin"},
 	}
 })
 
 -- Cooking
 minetest.register_craft({
-	type = 'cooking',
+	type = "cooking",
 	recipe = "bitchange:coinbase",
 	output = "bitchange:mineninth",
 })
 
 minetest.register_craft({
-	type = 'cooking',
+	type = "cooking",
 	recipe = "default:goldblock",
 	output = "bitchange:minecoinblock 2",
 })
+
 minetest.register_craft({
-	type = 'cooking',
+	type = "cooking",
 	recipe = "bitchange:minecoinblock",
 	output = "default:gold_ingot 4",
 })
 
 -- Generation
+if bitchange.enable_generation then
 minetest.register_ore({
 	ore_type       = "scatter",
 	ore            = "bitchange:minecoin_in_ground",
@@ -144,3 +146,4 @@ minetest.register_ore({
 	height_max     = 28000,
 	height_min     = -255,
 })
+end

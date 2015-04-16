@@ -1,7 +1,7 @@
 --Created by Krock
 --License: WTFPL
 
-if bitchange_use_moreores_tin and minetest.get_modpath("moreores") then
+if bitchange.use_moreores_tin and minetest.get_modpath("moreores") then
 	minetest.register_craft({
 		output = "bitchange:coinbase 18",
 		recipe = {
@@ -12,7 +12,7 @@ if bitchange_use_moreores_tin and minetest.get_modpath("moreores") then
 	})
 end
 
-if bitchange_use_technic_zinc and minetest.get_modpath("technic_worldgen") then
+if bitchange.use_technic_zinc and minetest.get_modpath("technic_worldgen") then
 	minetest.register_craft({
 		output = "bitchange:coinbase 8",
 		recipe = {
@@ -23,7 +23,7 @@ if bitchange_use_technic_zinc and minetest.get_modpath("technic_worldgen") then
 	})
 end
 
-if bitchange_use_quartz and minetest.get_modpath("quartz") then
+if bitchange.use_quartz and minetest.get_modpath("quartz") then
 	minetest.register_craft({
 		output = "bitchange:coinbase",
 		recipe = {

@@ -1,30 +1,31 @@
 -- General configuration - BitChange
 -- Created by Krock
 
-bitchange_initial_give			=	2
+bitchange.initial_give			= 2
 -- Enable/Disable whole nodes
-bitchange_enable_exchangeshop	=	true
-bitchange_enable_moneychanger	=	true
-bitchange_enable_warehouse		=	false
-bitchange_enable_toolrepair		=	true
-bitchange_enable_donationbox	=	true
+bitchange.enable_exchangeshop		= true
+bitchange.enable_moneychanger		= true
+bitchange.enable_warehouse		= false
+bitchange.enable_toolrepair		= true
+bitchange.enable_donationbox		= true
 
 -- Set this variable to false if you have a supported currency enabled
 --  and if you want to disable the exchanging/converting point - the bank
 -- Supported: money (by kotolegokot), money2 (by Bad Command), currency (by Dan Duncombe)
-bitchange_enable_bank			=	false
+bitchange.enable_bank			= false
 
 -- Converting other ores to MineCoins
 -- Tin		moreores
 -- Zinc		technic_worldgen
 -- Quartz	quartz
-bitchange_use_moreores_tin		=	false
-bitchange_use_technic_zinc		=	false
-bitchange_use_quartz			=	false
+bitchange.use_moreores_tin		= false
+bitchange.use_technic_zinc		= false
+bitchange.use_quartz			= false
 
 -- Pipeworks support
-bitchange_exchangeshop_pipeworks	=	false
-bitchange_warehouse_pipeworks		=	false
+bitchange.exchangeshop_pipeworks	= false
+bitchange.warehouse_pipeworks		= false
 
 -- Advanced generation settings
 -- Change in 'minecoins.lua', starting at line 101
+bitchange.enable_generation		= true

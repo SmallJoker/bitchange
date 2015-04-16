@@ -3,7 +3,7 @@ bitchange = {}
 bitchange.mod_path = minetest.get_modpath("bitchange")
 local world_path = minetest.get_worldpath()
 
-if freeminer then
+if rawget(_G, "freeminer") then
 	minetest = freeminer
 end
 
@@ -27,22 +27,22 @@ end
 
 dofile(bitchange.mod_path.."/minecoins.lua")
 dofile(bitchange.mod_path.."/moreores.lua")
-if bitchange_enable_exchangeshop then
+if bitchange.enable_exchangeshop then
 	dofile(bitchange.mod_path.."/shop.lua")
 end
-if bitchange_enable_moneychanger then
+if bitchange.enable_moneychanger then
 	dofile(bitchange.mod_path.."/moneychanger.lua")
 end
-if bitchange_enable_warehouse then
+if bitchange.enable_warehouse then
 	dofile(bitchange.mod_path.."/warehouse.lua")
 end
-if bitchange_enable_toolrepair then
+if bitchange.enable_toolrepair then
 	dofile(bitchange.mod_path.."/toolrepair.lua")
 end
-if bitchange_enable_donationbox then
+if bitchange.enable_donationbox then
 	dofile(bitchange.mod_path.."/donationbox.lua")
 end
-if bitchange_enable_bank then
+if bitchange.enable_bank then
 	local loaded_bank = false
 	for i, v in ipairs({"money", "money2", "currency"}) do
 		if minetest.get_modpath(v) then
@@ -61,13 +61,13 @@ end
 if not minetest.setting_getbool("creative_mode") and bitchange_initial_give > 0 then
 	-- Giving initial money
 	minetest.register_on_newplayer(function(player)
-		player:get_inventory():add_item("main", "bitchange:mineninth "..bitchange_initial_give)
+		player:get_inventory():add_item("main", "bitchange:mineninth "..bitchange.initial_give)
 	end)
 end
 
 -- Privs
 minetest.register_privilege("bitchange", "Can access to owned nodes of the bitchange mod")
-function bitchange_has_access(owner, player_name)
+function bitchange.has_access(owner, player_name)
 	return (player_name == owner or owner == "" or minetest.get_player_privs(player_name).server or minetest.get_player_privs(player_name).bitchange)
 end
 

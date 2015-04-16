@@ -3,7 +3,7 @@
 --License: WTFPL
 
 function get_warehouse_tube_config(mode)
-	if(bitchange_warehouse_pipeworks) then
+	if(bitchange.warehouse_pipeworks) then
 		if(mode == 1) then
 			return {cracky=1, level=2, tubedevice=1, tubedevice_receiver=1}
 		else
@@ -11,22 +11,22 @@ function get_warehouse_tube_config(mode)
 				insert_object = function(pos, node, stack, direction)
 					local meta = minetest.get_meta(pos)
 					local inv = meta:get_inventory()
-					if(inv:room_for_item("main",stack)) then
-						return inv:add_item("main",stack)
+					if inv:room_for_item("main", stack) then
+						return inv:add_item("main", stack)
 					else
-						return inv:add_item("main2",stack)
+						return inv:add_item("main2", stack)
 					end
 				end,
 				can_insert = function(pos, node, stack, direction)
 					local meta = minetest.get_meta(pos)
 					local inv = meta:get_inventory()
-					if(inv:room_for_item("main",stack)) then
+					if inv:room_for_item("main", stack) then
 						return true
 					else
-						return inv:room_for_item("main2",stack)
+						return inv:room_for_item("main2", stack)
 					end
 				end,
-				input_inventory="main",
+				input_inventory = "main",
 				connect_sides = {left=1, right=1, back=1, top=1, bottom=1}
 			}
 		end
@@ -90,31 +90,31 @@ minetest.register_node("bitchange:warehouse", {
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
-		if(not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
+		if not bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return 0
 		end
 		return count
 	end,
-    allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if(not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
+		if not bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return 0
 		end
 		return stack:get_count()
 	end,
-    allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if(not bitchange_has_access(meta:get_string("owner"), player:get_player_name())) then
+		if not bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return 0
 		end
 		return stack:get_count()
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
 		local meta = minetest.get_meta(pos)
-		if(not bitchange_has_access(meta:get_string("owner"), sender:get_player_name())) then
+		if not bitchange.has_access(meta:get_string("owner"), sender:get_player_name()) then
 			return
 		end
-		if(fields.inv_lv1) then
+		if fields.inv_lv1 then
 			meta:set_string("formspec", "size[12,10;]"..
 				"label[0,0;Warehouse]"..
 				"label[2,0;Layer:]"..
@@ -124,7 +124,7 @@ minetest.register_node("bitchange:warehouse", {
 				"list[current_name;main;0,1;12,4;]"..
 				"list[current_player;main;2,6;8,4;]")
 		end
-		if(fields.inv_lv2) then
+		if fields.inv_lv2 then
 			meta:set_string("formspec", "size[12,10;]"..
 				"label[0,0;Warehouse]"..
 				"label[2,0;Layer:]"..
@@ -138,10 +138,10 @@ minetest.register_node("bitchange:warehouse", {
 })
 
 minetest.register_craft({
-	output = 'bitchange:warehouse',
+	output = "bitchange:warehouse",
 	recipe = {
-		{'default:chest_locked', 'bitchange:minecoinblock', 'default:chest_locked'},
-		{'default:chest_locked', 'default:mese', 'default:chest_locked'},
-		{'default:chest_locked', 'default:chest_locked', 'default:chest_locked'}
+		{"default:chest_locked", "bitchange:minecoinblock", "default:chest_locked"},
+		{"default:chest_locked", "default:mese", "default:chest_locked"},
+		{"default:chest_locked", "default:chest_locked", "default:chest_locked"}
 	}
 })

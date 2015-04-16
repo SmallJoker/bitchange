@@ -50,7 +50,7 @@ local function get_exchange_shop_formspec(number,pos,title)
 end
 
 local function get_exchange_shop_tube_config(mode)
-	if bitchange_exchangeshop_pipeworks then
+	if bitchange.exchangeshop_pipeworks then
 		if mode == 1 then
 			return {choppy=2, oddly_breakable_by_hand=2, tubedevice=1, tubedevice_receiver=1}
 		else
@@ -231,7 +231,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		if err_msg ~= "" then
 			minetest.chat_send_player(player_name, "Exchange shop: "..err_msg)
 		end
-	elseif bitchange_has_access(shop_owner, player_name) then
+	elseif bitchange.has_access(shop_owner, player_name) then
 		local num = 0
 		if fields.vcustm then
 			num = 2
@@ -301,12 +301,12 @@ minetest.register_node("bitchange:shop", {
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
-		if bitchange_has_access(meta:get_string("owner"), player:get_player_name()) then
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return count
 		end
 		return 0
 	end,
-    allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		if player:get_player_name() == ":pipeworks" then
 			return stack:get_count()
 		end
@@ -315,18 +315,18 @@ minetest.register_node("bitchange:shop", {
 			return 0
 		end
 		local meta = minetest.get_meta(pos)
-		if bitchange_has_access(meta:get_string("owner"), player:get_player_name()) and 
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) and 
 				listname ~= "cust_ej" and listname ~= "custm_ej" then
 			return stack:get_count()
 		end
 		return 0
 	end,
-    allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		if player:get_player_name() == ":pipeworks" then
 			return stack:get_count()
 		end
 		local meta = minetest.get_meta(pos)
-		if bitchange_has_access(meta:get_string("owner"), player:get_player_name()) or listname == "cust_ej" then
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) or listname == "cust_ej" then
 			return stack:get_count()
 		end
 		return 0

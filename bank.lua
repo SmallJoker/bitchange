@@ -87,21 +87,21 @@ minetest.register_node("bitchange:bank", {
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
-		if bitchange_has_access(meta:get_string("owner"), player:get_player_name()) then
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return count
 		end
 		return 0
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if bitchange_has_access(meta:get_string("owner"), player:get_player_name()) then
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return stack:get_count()
 		end
 		return 0
 	end,
     allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
-		if bitchange_has_access(meta:get_string("owner"), player:get_player_name()) then
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return stack:get_count()
 		end
 		return 0
