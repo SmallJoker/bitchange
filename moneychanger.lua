@@ -144,7 +144,7 @@ minetest.register_node("bitchange:moneychanger", {
 			end
 			if stack_name == "bitchange:mineninth" or
 					stack_name == "bitchange:minecoin" or
-					stack_name == "bitchange:minecoinblock") then
+					stack_name == "bitchange:minecoinblock" then
 				return moneychanger.update_fields(pos, listname, index, stack, false)
 			end
 		end
