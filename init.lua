@@ -58,7 +58,7 @@ if bitchange.enable_bank then
 	end
 end
 
-if not minetest.setting_getbool("creative_mode") and bitchange_initial_give > 0 then
+if not minetest.setting_getbool("creative_mode") and bitchange.initial_give > 0 then
 	-- Giving initial money
 	minetest.register_on_newplayer(function(player)
 		player:get_inventory():add_item("main", "bitchange:mineninth "..bitchange.initial_give)
