@@ -8,6 +8,7 @@ local exchange_shop = {}
 local function get_exchange_shop_formspec(number,pos,title)
 	local formspec = ""
 	local name = "nodemeta:"..pos.x..","..pos.y..","..pos.z
+
 	if number == 1 then
 		-- customer
 		formspec = ("size[8,9;]"..
@@ -20,7 +21,9 @@ local function get_exchange_shop_formspec(number,pos,title)
 				"label[0.7,3.5;Ejected items:]"..
 				"label[0.7,3.8;(Remove me!)]"..
 				"list["..name..";cust_ej;3,3.5;4,1;]"..
-				"list[current_player;main;0,5;8,4;]")
+				"list[current_player;main;0,5;8,4;]"..
+				"listring["..name..";custm_ej]"..
+				"listring[current_player;main]")
 	elseif number == 2 or number == 3 then
 		-- owner
 		formspec = ("size[11,10;]"..
@@ -34,13 +37,21 @@ local function get_exchange_shop_formspec(number,pos,title)
 				"label[0.3,3.5;Ejected items: (Remove me!)]"..
 				"list["..name..";custm_ej;0,4;4,1;]"..
 				"label[6,0;You are viewing:]"..
-				"label[6,0.3;(Click to switch)]")
+				"label[6,0.3;(Click to switch)]"..
+				"listring["..name..";custm_ej]"..
+				"listring[current_player;main]")
 		if number == 2 then
-			formspec = (formspec.."button[8.5,0.2;2.5,0.5;vstock;Customers stock]"..
-				"list["..name..";custm;6,1;5,4;]")
+			formspec = (formspec..
+				"button[8.5,0.2;2.5,0.5;vstock;Customers stock]"..
+				"list["..name..";custm;6,1;5,4;]"..
+				"listring["..name..";custm]"..
+				"listring[current_player;main]")
 		else
-			formspec = (formspec.."button[8.5,0.2;2.5,0.5;vcustm;Your stock]"..
-				"list["..name..";stock;6,1;5,4;]")
+			formspec = (formspec..
+				"button[8.5,0.2;2.5,0.5;vcustm;Your stock]"..
+				"list["..name..";stock;6,1;5,4;]"..
+				"listring["..name..";stock]"..
+				"listring[current_player;main]")
 		end
 		formspec = (formspec..
 				"label[1,5;Use (E) + (Right click) for customer interface]"..
@@ -91,7 +102,10 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		return
 	end
 	local player_name = sender:get_player_name()
-	if not exchange_shop[player_name] then return end
+	if not exchange_shop[player_name] then
+		return
+	end
+
 	local pos = exchange_shop[player_name]
 	local meta = minetest.get_meta(pos)
 	local title = meta:get_string("title") or ""
@@ -100,7 +114,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		exchange_shop[player_name] = nil
 		return
 	end
-	
+
 	if fields.set_title then
 		if fields.title and title ~= fields.title then
 			if fields.title ~= "" then
@@ -108,10 +122,10 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 			else
 				meta:set_string("infotext", "Exchange shop (owned by "..shop_owner..")")
 			end
-			meta:set_string("title", fields.title)
+			meta:set_string("title", minetest.formspec_escape(fields.title))
 		end
 	end
-	
+
 	if fields.exchange then
 		local shop_inv = meta:get_inventory()
 		if shop_inv:is_empty("cust_ow") and shop_inv:is_empty("cust_og") then
@@ -276,8 +290,8 @@ minetest.register_node("bitchange:shop", {
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
-		if (inv:is_empty("stock") and inv:is_empty("custm") and 
-			inv:is_empty("custm_ej") and inv:is_empty("cust_ow") and 
+		if (inv:is_empty("stock") and inv:is_empty("custm") and
+			inv:is_empty("custm_ej") and inv:is_empty("cust_ow") and
 			inv:is_empty("cust_og") and inv:is_empty("cust_ej")) then
 			return true
 		end
@@ -316,7 +330,7 @@ minetest.register_node("bitchange:shop", {
 			return 0
 		end
 		local meta = minetest.get_meta(pos)
-		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) and 
+		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) and
 				listname ~= "cust_ej" and listname ~= "custm_ej" then
 			return stack:get_count()
 		end
