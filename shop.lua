@@ -303,7 +303,7 @@ minetest.register_node("bitchange:shop", {
 		local player_name = clicker:get_player_name()
 		local view = 0
 		exchange_shop[player_name] = pos
-		if player_name == meta:get_string("owner") then
+		if bitchange.has_access(meta:get_string("owner"), player_name) then
 			if clicker:get_player_control().aux1 then
 				view = 1
 			else
@@ -355,3 +355,21 @@ minetest.register_craft({
 		{"default:chest_locked"},
 	}
 })
+
+minetest.register_on_dieplayer(function(player)
+	local player_name = player:get_player_name()
+	exchange_shop[player_name] = nil
+end)
+
+if minetest.get_modpath("wrench") and wrench then
+	local STRING = wrench.META_TYPE_STRING
+	wrench:register_node("bitchange:shop", {
+		lists = {"stock", "custm", "custm_ej", "cust_ow", "cust_og", "cust_ej"},
+		metas = {
+			owner = STRING,
+			infotext = STRING,
+			title = STRING,
+		},
+		owned = true
+	})
+end

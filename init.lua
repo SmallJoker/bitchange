@@ -68,7 +68,11 @@ end
 -- Privs
 minetest.register_privilege("bitchange", "Can access to owned nodes of the bitchange mod")
 function bitchange.has_access(owner, player_name)
-	return (player_name == owner or owner == "" or minetest.get_player_privs(player_name).server or minetest.get_player_privs(player_name).bitchange)
+	if player_name == owner or owner == "" then
+		return true
+	end
+	local privs = minetest.get_player_privs(player_name)
+	return privs.server or privs.bitchange
 end
 
 print("[BitChange] Loaded.")
