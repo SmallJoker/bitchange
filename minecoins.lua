@@ -5,7 +5,7 @@
 -- Node definitions
 minetest.register_node("bitchange:minecoin_in_ground", {
 	description = "MineCoin Ore",
-	tile_images = { "default_stone.png^bitchange_minecoin_in_ground.png" },
+	tiles = { "default_stone.png^bitchange_minecoin_in_ground.png" },
 	is_ground_content = true,
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults(),
@@ -20,7 +20,7 @@ minetest.register_node("bitchange:minecoin_in_ground", {
 
 minetest.register_node("bitchange:mineninth_in_ground", {
 	description = "MineNinth Ore",
-	tile_images = { "default_stone.png^bitchange_mineninth_in_ground.png" },
+	tiles = { "default_stone.png^bitchange_mineninth_in_ground.png" },
 	is_ground_content = true,
 	groups = {cracky=3},
 	sounds = default.node_sound_stone_defaults(),
@@ -36,7 +36,7 @@ minetest.register_node("bitchange:mineninth_in_ground", {
 
 minetest.register_node("bitchange:minecoinblock", {
 	description = "MineCoin Block",
-	tile_images = { "bitchange_minecoinblock.png" },
+	tiles = { "bitchange_minecoinblock.png" },
 	is_ground_content = true,
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults(),
@@ -121,8 +121,8 @@ minetest.register_ore({
 	clust_scarcity = 15*15*15,
 	clust_num_ores = 3,
 	clust_size     = 7,
-	height_max     = -512,
-	height_min     = -18000,
+	y_max          = -512,
+	y_min          = -18000,
 })
 
 minetest.register_ore({
@@ -132,8 +132,8 @@ minetest.register_ore({
 	clust_scarcity = 12*12*12,
 	clust_num_ores = 5,
 	clust_size     = 8,
-	height_max     = -256,
-	height_min     = -511,
+	y_max          = -256,
+	y_min          = -511,
 })
 
 minetest.register_ore({
@@ -143,7 +143,7 @@ minetest.register_ore({
 	clust_scarcity = 13*13*13,
 	clust_num_ores = 3,
 	clust_size     = 7,
-	height_max     = 28000,
-	height_min     = -255,
+	y_max          = 28000,
+	y_min          = -255,
 })
 end
