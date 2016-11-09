@@ -18,4 +18,6 @@ Dependencies:
 	money2			(optional)
 	currency		(optional)
 
-Forum link: https://forum.minetest.net/viewtopic.php?id=7821 
+Forum link: https://forum.minetest.net/viewtopic.php?id=7821
+
+Requires Minetest 0.4.14 (stable) or newer.
