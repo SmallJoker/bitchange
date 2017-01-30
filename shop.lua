@@ -5,6 +5,29 @@
 
 local exchange_shop = {}
 
+-- Tool wear aware replacement for contains_item.
+local function list_contains_item(inv, listname, stack)
+	local list = inv:get_list(listname)
+	for i, list_stack in pairs(list) do
+		if list_stack:get_name()  == stack:get_name()  and
+		   list_stack:get_count() >= stack:get_count() and
+		   list_stack:get_wear()  <= stack:get_wear() then
+			return i
+		end
+	end
+end
+
+-- Tool wear aware replacement for remove_item.
+local function list_remove_item(inv, listname, stack)
+	local index = list_contains_item(inv, listname, stack)
+	if index then
+		local list_stack = inv:get_stack(listname, index)
+		local removed_stack = list_stack:take_item(stack:get_count())
+		inv:set_stack(listname, index, list_stack)
+		return removed_stack
+	end
+end
+
 local function get_exchange_shop_formspec(number,pos,title)
 	local formspec = ""
 	local name = "nodemeta:"..pos.x..","..pos.y..","..pos.z
@@ -200,7 +223,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		-- Check availability of the shop's items
 		if err_msg == "" then
 			for i, item in pairs(cust_og) do
-				if not shop_inv:contains_item("stock", item) then
+				if not list_contains_item(shop_inv, "stock", item) then
 					err_msg = "This shop is sold out."
 					break
 				end
@@ -220,7 +243,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		-- Check availability of the player's items
 		if err_msg == "" then
 			for i, item in pairs(cust_ow) do
-				if not player_inv:contains_item("main", item) then
+				if not list_contains_item(player_inv, "main", item) then
 					err_msg = "You do not have the required items."
 					break
 				end
@@ -231,7 +254,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		if err_msg == "" then
 			local fully_exchanged = true
 			for i, item in pairs(cust_ow) do
-				local stack = player_inv:remove_item("main", item)
+				local stack = list_remove_item(player_inv, "main", item)
 				if shop_inv:room_for_item("custm", stack) then
 					shop_inv:add_item("custm", stack)
 				else
@@ -241,7 +264,7 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 				end
 			end
 			for i, item in pairs(cust_og) do
-				local stack = shop_inv:remove_item("stock", item)
+				local stack = list_remove_item(shop_inv, "stock", item)
 				if player_inv:room_for_item("main", stack) then
 					player_inv:add_item("main", stack)
 				else
