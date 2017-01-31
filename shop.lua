@@ -6,27 +6,26 @@
 local exchange_shop = {}
 
 -- Tool wear aware replacement for contains_item.
-local function list_contains_item(inv, list, stack)
-	for i, list_stack in pairs(inv:get_list(list)) do
+local function list_contains_item(inv, listname, stack)
+	local list = inv:get_list(listname)
+	for i, list_stack in pairs(list) do
 		if list_stack:get_name()  == stack:get_name()  and
 		   list_stack:get_count() >= stack:get_count() and
 		   list_stack:get_wear()  <= stack:get_wear() then
-			return true, i
+			return i
 		end
 	end
-	return false, nil
 end
 
 -- Tool wear aware replacement for remove_item.
-local function list_remove_item(inv, list, stack)
-	local contains, index =	list_contains_item(inv, list, stack)
-	if contains then
-		local list_stack = inv:get_stack(list, index)
+local function list_remove_item(inv, listname, stack)
+	local index = list_contains_item(inv, listname, stack)
+	if index then
+		local list_stack = inv:get_stack(listname, index)
 		local removed_stack = list_stack:take_item(stack:get_count())
-		inv:set_stack(list, index, list_stack)
+		inv:set_stack(listname, index, list_stack)
 		return removed_stack
 	end
-	return false
 end
 
 local function get_exchange_shop_formspec(number,pos,title)
