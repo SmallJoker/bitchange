@@ -7,25 +7,48 @@ local exchange_shop = {}
 
 -- Tool wear aware replacement for contains_item.
 local function list_contains_item(inv, listname, stack)
+	local count = stack:get_count()
+	if count == 0 then return true end
+
 	local list = inv:get_list(listname)
-	for i, list_stack in pairs(list) do
-		if list_stack:get_name()  == stack:get_name()  and
-		   list_stack:get_count() >= stack:get_count() and
-		   list_stack:get_wear()  <= stack:get_wear() then
-			return i
+	local name = stack:get_name()
+	local wear = stack:get_wear()
+	for _, list_stack in pairs(list) do
+		if list_stack:get_name() == name and
+		   list_stack:get_wear() <= wear then
+			if list_stack:get_count() >= count then
+				return true
+			else
+				count = count - list_stack:get_count()
+			end
 		end
 	end
 end
 
 -- Tool wear aware replacement for remove_item.
 local function list_remove_item(inv, listname, stack)
-	local index = list_contains_item(inv, listname, stack)
-	if index then
-		local list_stack = inv:get_stack(listname, index)
-		local removed_stack = list_stack:take_item(stack:get_count())
-		inv:set_stack(listname, index, list_stack)
-		return removed_stack
+	local count = stack:get_count()
+	if count == 0 then return stack end
+	local removed_stack = ItemStack(nil)
+
+	local list = inv:get_list(listname)
+	local name = stack:get_name()
+	local wear = stack:get_wear()
+	for index, list_stack in pairs(list) do
+		if list_stack:get_name() == name and
+		   list_stack:get_wear() <= wear then
+			if list_stack:get_count() >= count then
+				removed_stack:add_item(list_stack:take_item(count))
+				inv:set_stack(listname, index, list_stack)
+				break
+			else
+				removed_stack:add_item(list_stack)
+				inv:set_stack(listname, index, ItemStack(nil))
+				count = count - list_stack:get_count()
+			end
+		end
 	end
+	return removed_stack
 end
 
 local function get_exchange_shop_formspec(number,pos,title)
