@@ -29,29 +29,35 @@ end
 
 -- Tool wear aware replacement for remove_item.
 local function list_remove_item(inv, listname, stack)
-	local count = stack:get_count()
-	if count == 0 then
+	local wanted = stack:get_count()
+	if wanted == 0 then
 		return stack
 	end
-	local removed_stack = ItemStack(nil)
 
 	local list = inv:get_list(listname)
 	local name = stack:get_name()
 	local wear = stack:get_wear()
+	local remaining = wanted
+	local removed_wear = 0
+
 	for index, list_stack in pairs(list) do
 		if list_stack:get_name() == name and
 		   list_stack:get_wear() <= wear then
-			if list_stack:get_count() >= count then
-				removed_stack:add_item(list_stack:take_item(count))
-				inv:set_stack(listname, index, list_stack)
+			local taken_stack = list_stack:take_item(remaining)
+			inv:set_stack(listname, index, list_stack)
+
+			removed_wear = math.max(removed_wear, taken_stack:get_wear())
+			remaining = remaining - taken_stack:get_count()
+			if remaining == 0 then
 				break
-			else
-				removed_stack:add_item(list_stack)
-				inv:set_stack(listname, index, ItemStack(nil))
-				count = count - list_stack:get_count()
 			end
 		end
 	end
+
+	-- Todo: Also remove kebab
+	local removed_stack = ItemStack(name)
+	removed_stack:set_count(wanted - remaining)
+	removed_stack:set_wear(removed_wear)
 	return removed_stack
 end
 
