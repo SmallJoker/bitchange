@@ -1,7 +1,25 @@
---Created by Krock for the BitChange mod
---Parts of codes, images and ideas from Dan Duncombe's exchange shop
---  https://forum.minetest.net/viewtopic.php?id=7002
---License: WTFPL
+--[[
+	Exchange Shop [bitchange]
+
+This code is based on the idea of Dan Duncombe's exchange shop
+	https://web.archive.org/web/20160403113102/https://forum.minetest.net/viewtopic.php?id=7002
+You do not need the entire bitchange mod to use this code.
+Make sure you've got all textures to use it in a separate mod.
+
+License: WTFPL
+]]
+
+
+if not bitchange then
+	-- Default values, if bitchange wasn't found.
+	bitchange = {}
+	bitchange.exchangeshop_pipeworks = true
+
+	function bitchange.has_access(owner, player_name)
+		return (player_name == owner or owner == ""
+			or minetest.get_player_privs(player_name).server)
+	end
+end
 
 local exchange_shop = {}
 
@@ -61,42 +79,48 @@ local function list_remove_item(inv, listname, stack)
 	return removed_stack
 end
 
-local function get_exchange_shop_formspec(number,pos,title)
-	local formspec = ""
+local function get_exchange_shop_formspec(mode, pos, title)
 	local name = "nodemeta:"..pos.x..","..pos.y..","..pos.z
 
-	if number == 1 then
+	if mode == "customer" then
 		-- customer
-		formspec = ("size[8,9;]"..
-				"label[0,0;Exchange shop]"..
-				"label[1,0.5;Owner needs:]"..
-				"list["..name..";cust_ow;1,1;2,2;]"..
-				"button[3,2.4;2,1;exchange;Exchange]"..
-				"label[5,0.5;Owner gives:]"..
-				"list["..name..";cust_og;5,1;2,2;]"..
-				"label[0.7,3.5;Ejected items:]"..
-				"label[0.7,3.8;(Remove me!)]"..
-				"list["..name..";cust_ej;3,3.5;4,1;]"..
-				"list[current_player;main;0,5;8,4;]"..
-				"listring["..name..";custm_ej]"..
-				"listring[current_player;main]")
-	elseif number == 2 or number == 3 then
+		return (
+			"size[8,9;]"..
+			"label[0,0;Exchange shop]"..
+			"label[1,0.5;Owner needs:]"..
+			"list["..name..";cust_ow;1,1;2,2;]"..
+			"button[3,2.4;2,1;exchange;Exchange]"..
+			"label[5,0.5;Owner gives:]"..
+			"list["..name..";cust_og;5,1;2,2;]"..
+			"label[0.7,3.5;Ejected items:]"..
+			"label[0.7,3.8;(Remove me!)]"..
+			"list["..name..";cust_ej;3,3.5;4,1;]"..
+			"list[current_player;main;0,5;8,4;]"..
+			"listring["..name..";custm_ej]"..
+			"listring[current_player;main]"
+		)
+	end
+	if mode == "owner_custm"
+			or mode == "owner_stock" then
 		-- owner
-		formspec = ("size[11,10;]"..
-				"label[0.3,0.1;Title:]"..
-				"field[1.5,0.5;3,0.5;title;;"..title.."]"..
-				"button[4.1,0.24;1,0.5;set_title;Set]"..
-				"label[0,0.7;You need:]"..
-				"list["..name..";cust_ow;0,1.2;2,2;]"..
-				"label[3,0.7;You give:]"..
-				"list["..name..";cust_og;3,1.2;2,2;]"..
-				"label[0.3,3.5;Ejected items: (Remove me!)]"..
-				"list["..name..";custm_ej;0,4;4,1;]"..
-				"label[6,0;You are viewing:]"..
-				"label[6,0.3;(Click to switch)]"..
-				"listring["..name..";custm_ej]"..
-				"listring[current_player;main]")
-		if number == 2 then
+		local formspec = (
+			"size[11,10;]"..
+			"label[0.3,0.1;Title:]"..
+			"field[1.5,0.5;3,0.5;title;;"..title.."]"..
+			"field_close_on_enter[title;false]"..
+			"button[4.1,0.2;1,0.5;set_title;Set]"..
+			"label[0,0.7;You need:]"..
+			"list["..name..";cust_ow;0,1.2;2,2;]"..
+			"label[3,0.7;You give:]"..
+			"list["..name..";cust_og;3,1.2;2,2;]"..
+			"label[0,3.5;Ejected items: (Remove me!)]"..
+			"list["..name..";custm_ej;0,4;4,1;]"..
+			"label[6,0;You are viewing:]"..
+			"label[6,0.3;(Click to switch)]"..
+			"listring["..name..";custm_ej]"..
+			"listring[current_player;main]"
+		)
+		if mode == "owner_custm" then
 			formspec = (formspec..
 				"button[8.5,0.2;2.5,0.5;vstock;Customers stock]"..
 				"list["..name..";custm;6,1;5,4;]"..
@@ -109,47 +133,47 @@ local function get_exchange_shop_formspec(number,pos,title)
 				"listring["..name..";stock]"..
 				"listring[current_player;main]")
 		end
-		formspec = (formspec..
-				"label[1,5;Use (E) + (Right click) for customer interface]"..
-				"list[current_player;main;1,6;8,4;]")
+		return (formspec..
+			"label[1,5;Use (E) + (Right click) for customer interface]"..
+			"list[current_player;main;1,6;8,4;]")
 	end
-	return formspec
+	return ""
 end
 
 local function get_exchange_shop_tube_config(mode)
-	if bitchange.exchangeshop_pipeworks then
-		if mode == 1 then
-			return {choppy=2, oddly_breakable_by_hand=2, tubedevice=1, tubedevice_receiver=1}
-		else
+	if mode == "groups" then
+		if bitchange.exchangeshop_pipeworks then
+			return {choppy=2, oddly_breakable_by_hand=2, 
+				tubedevice=1, tubedevice_receiver=1}
+		end
+		return {choppy=2, oddly_breakable_by_hand=2}
+	end
+	if mode == "tube" then
+		if bitchange.exchangeshop_pipeworks then
 			return {
 				insert_object = function(pos, node, stack, direction)
 					local meta = minetest.get_meta(pos)
 					local inv = meta:get_inventory()
-					return inv:add_item("stock",stack)
+					return inv:add_item("stock", stack)
 				end,
 				can_insert = function(pos, node, stack, direction)
 					local meta = minetest.get_meta(pos)
 					local inv = meta:get_inventory()
-					return inv:room_for_item("stock",stack)
+					return inv:room_for_item("stock", stack)
 				end,
-				input_inventory="custm",
+				input_inventory = "custm",
 				connect_sides = {left=1, right=1, back=1, top=1, bottom=1}
 			}
 		end
-	else
-		if mode == 1 then
-			return {choppy=2,oddly_breakable_by_hand=2}
-		else
-			return {
-				insert_object = function(pos, node, stack, direction)
-					return false
-				end,
-				can_insert = function(pos, node, stack, direction)
-					return false
-				end,
-				connect_sides = {}
-			}
-		end
+		return {
+			insert_object = function()
+				return false
+			end,
+			can_insert = function()
+				return false
+			end,
+			connect_sides = {}
+		}
 	end
 end
 
@@ -157,12 +181,13 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 	if formname ~= "bitchange:shop_formspec" then
 		return
 	end
+
 	local player_name = sender:get_player_name()
-	if not exchange_shop[player_name] then
+	local pos = exchange_shop[player_name]
+	if not pos then
 		return
 	end
 
-	local pos = exchange_shop[player_name]
 	local meta = minetest.get_meta(pos)
 	local title = meta:get_string("title") or ""
 	local shop_owner = meta:get_string("owner")
@@ -171,12 +196,14 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		return
 	end
 
-	if fields.set_title then
-		if fields.title and title ~= fields.title then
+	if fields.title then
+		if title ~= fields.title then
 			if fields.title ~= "" then
-				meta:set_string("infotext", "'"..fields.title.."' (owned by "..shop_owner..")")
+				meta:set_string("infotext", "'" .. fields.title
+					.. "' (owned by " .. shop_owner .. ")")
 			else
-				meta:set_string("infotext", "Exchange shop (owned by "..shop_owner..")")
+				meta:set_string("infotext", "Exchange shop (owned by "
+					.. shop_owner ..")")
 			end
 			meta:set_string("title", minetest.formspec_escape(fields.title))
 		end
@@ -316,26 +343,27 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 			minetest.chat_send_player(player_name, "Exchange shop: "..err_msg)
 		end
 	elseif bitchange.has_access(shop_owner, player_name) then
-		local num = 0
+		local mode
 		if fields.vcustm then
-			num = 2
+			mode = "owner_custm"
 		elseif fields.vstock then
-			num = 3
+			mode = "owner_stock"
 		else
 			return
 		end
-		minetest.show_formspec(player_name, "bitchange:shop_formspec", get_exchange_shop_formspec(num, pos, title))
+		minetest.show_formspec(player_name, "bitchange:shop_formspec",
+			get_exchange_shop_formspec(mode, pos, title))
 	end
 end)
 
-minetest.register_node("bitchange:shop", {
+minetest.register_node(":bitchange:shop", {
 	description = "Shop",
 	tiles = {"bitchange_shop_top.png", "bitchange_shop_top.png",
 			 "bitchange_shop_side.png", "bitchange_shop_side.png",
 			 "bitchange_shop_side.png", "bitchange_shop_front.png"},
 	paramtype2 = "facedir",
-	groups = get_exchange_shop_tube_config(1),
-	tube = get_exchange_shop_tube_config(2),
+	groups = get_exchange_shop_tube_config("groups"),
+	tube = get_exchange_shop_tube_config("tube"),
 	sounds = default.node_sound_wood_defaults(),
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
@@ -364,24 +392,22 @@ minetest.register_node("bitchange:shop", {
 				and inv:is_empty("cust_og") and inv:is_empty("cust_ej") then
 			return true
 		end
-		minetest.chat_send_player(player:get_player_name(), "Cannot dig exchange shop: one or multiple stocks are in use.")
+		minetest.chat_send_player(player:get_player_name(),
+			"Cannot dig exchange shop: one or multiple stocks are in use.")
 		return false
 	end,
 	on_rightclick = function(pos, node, clicker, itemstack)
 		local meta = minetest.get_meta(pos)
 		local player_name = clicker:get_player_name()
-		local view = 0
-		exchange_shop[player_name] = pos
-		if bitchange.has_access(meta:get_string("owner"), player_name) then
-			if clicker:get_player_control().aux1 then
-				view = 1
-			else
-				view = 2
-			end
-		else
-			view = 1
+
+		local mode = "customer"
+		if bitchange.has_access(meta:get_string("owner"), player_name) and
+				not clicker:get_player_control().aux1 then
+			mode = "owner_custm"
 		end
-		minetest.show_formspec(player_name, "bitchange:shop_formspec", get_exchange_shop_formspec(view, pos, meta:get_string("title")))
+		exchange_shop[player_name] = pos
+		minetest.show_formspec(player_name, "bitchange:shop_formspec",
+			get_exchange_shop_formspec(mode, pos, meta:get_string("title")))
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
@@ -395,7 +421,8 @@ minetest.register_node("bitchange:shop", {
 			return stack:get_count()
 		end
 		if listname == "custm" then
-			minetest.chat_send_player(player:get_player_name(), "Exchange shop: Please press 'Customers stock' and insert your items there.")
+			minetest.chat_send_player(player:get_player_name(),
+				"Exchange shop: Please press 'Customers stock' and insert your items there.")
 			return 0
 		end
 		local meta = minetest.get_meta(pos)
@@ -427,7 +454,7 @@ minetest.register_craft({
 	}
 })
 
-minetest.register_on_dieplayer(function(player)
+minetest.register_on_leaveplayer(function(player)
 	local player_name = player:get_player_name()
 	exchange_shop[player_name] = nil
 end)
