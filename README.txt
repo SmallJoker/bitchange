@@ -10,12 +10,10 @@ License: CC0 (for everything)
 Dependencies:
 	default
 	moreores		(optional)
-	technic_worldgen	(optional)
-	quartz			(optional)
 	pipeworks		(optional)
-	money			(optional)
-	money2			(optional)
-	currency		(optional)
+	quartz			(optional)
+	technic_worldgen	(optional)
+	wrench		(optional)
 
 Forum link: https://forum.minetest.net/viewtopic.php?id=7821
 

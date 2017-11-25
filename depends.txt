@@ -1,9 +1,6 @@
 default
 moreores?
+pipeworks?
+quartz?
 technic_worldgen?
 wrench?
-quartz?
-pipeworks?
-money?
-money2?
-currency?

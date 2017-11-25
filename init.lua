@@ -37,21 +37,6 @@ end
 if bitchange.enable_donationbox then
 	dofile(bitchange.mod_path.."/donationbox.lua")
 end
-if bitchange.enable_bank then
-	local loaded_bank = false
-	for i, v in ipairs({"money", "money2", "currency"}) do
-		if minetest.get_modpath(v) then
-			loaded_bank = v
-			break
-		end
-	end
-	if loaded_bank then
-		dofile(bitchange.mod_path.."/bank.lua")
-		bitchange.bank.file_path = world_path.."/bitchange_bank_"..loaded_bank
-		dofile(bitchange.mod_path.."/bank_"..loaded_bank..".lua")
-		minetest.log("action", "[BitChange] Bank loaded: "..loaded_bank)
-	end
-end
 
 if not minetest.setting_getbool("creative_mode") and bitchange.initial_give > 0 then
 	-- Giving initial money
