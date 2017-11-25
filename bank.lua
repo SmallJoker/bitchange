@@ -52,7 +52,7 @@ minetest.register_node("bitchange:bank", {
 			 "bitchange_bank_side.png", "bitchange_bank_side.png",
 			 "bitchange_bank_side.png", "bitchange_bank_front.png"},
 	paramtype2 = "facedir",
-	groups = {cracky=1,level=1},
+	groups = {cracky=1, level=1, not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos)
@@ -99,7 +99,7 @@ minetest.register_node("bitchange:bank", {
 		end
 		return 0
 	end,
-    allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
 		if bitchange.has_access(meta:get_string("owner"), player:get_player_name()) then
 			return stack:get_count()

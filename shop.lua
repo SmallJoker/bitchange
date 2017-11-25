@@ -16,8 +16,11 @@ if not bitchange then
 	bitchange.exchangeshop_pipeworks = true
 
 	function bitchange.has_access(owner, player_name)
-		return (player_name == owner or owner == ""
-			or minetest.get_player_privs(player_name).server)
+		if player_name == owner or owner == "" then
+			return true
+		end
+		local privs = minetest.get_player_privs(player_name)
+		return privs.server or privs.protection_bypass
 	end
 end
 
@@ -197,6 +200,8 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 	end
 
 	if fields.title then
+		-- Limit title length
+		fields.title = fields.title:sub(1, 80)
 		if title ~= fields.title then
 			if fields.title ~= "" then
 				meta:set_string("infotext", "'" .. fields.title

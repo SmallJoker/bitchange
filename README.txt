@@ -1,12 +1,11 @@
-Bitchange
+BitChange
 =========
 
 This mod adds the currency "MineCoin" to your Minetest world.
 To change a setting, edit the file 'bitchange_config.txt' in your world directory.
 Copy and paste 'config.default.txt' if the file does not exist yet.
 
-License:	WTFPL (for code and textures)
-Adds privilege:	bitchange
+License: CC0 (for everything)
 
 Dependencies:
 	default

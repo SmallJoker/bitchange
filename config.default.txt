@@ -1,7 +1,7 @@
 -- General configuration - BitChange
--- Created by Krock
+-- Do NOT change your settings in "config.default.txt"
 
-bitchange.initial_give			= 2
+bitchange.initial_give			= 10
 -- Enable/Disable whole nodes
 bitchange.enable_exchangeshop		= true
 bitchange.enable_moneychanger		= true
@@ -28,4 +28,4 @@ bitchange.warehouse_pipeworks		= false
 
 -- Advanced generation settings
 -- Change in 'minecoins.lua', starting at line 101
-bitchange.enable_generation		= true
+bitchange.enable_generation		= false

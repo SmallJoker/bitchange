@@ -1,13 +1,9 @@
---bitcoins by MilesDyson@DistroGeeks.com
---Modified by Krock
---License: WTFPL
-
 -- Node definitions
 minetest.register_node("bitchange:minecoin_in_ground", {
-	description = "MineCoin Ore",
+	description = "you hacker!",
 	tiles = { "default_stone.png^bitchange_minecoin_in_ground.png" },
 	is_ground_content = true,
-	groups = {cracky=2},
+	groups = {cracky=2, not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
 	drop = {
 		max_items = 2,
@@ -19,17 +15,16 @@ minetest.register_node("bitchange:minecoin_in_ground", {
 })
 
 minetest.register_node("bitchange:mineninth_in_ground", {
-	description = "MineNinth Ore",
+	description = "you hacker!",
 	tiles = { "default_stone.png^bitchange_mineninth_in_ground.png" },
 	is_ground_content = true,
-	groups = {cracky=3},
+	groups = {cracky=3, not_in_creative_inventory=1},
 	sounds = default.node_sound_stone_defaults(),
 	drop = {
 		max_items = 3,
 		items = {
-			{items = {"bitchange:coinbase"}, rarity = 5 },
-			{items = {"bitchange:coinbase 2"}, rarity = 3 },
-			{items = {"bitchange:coinbase 6"} }
+			{items = {"bitchange:mineninth 4"}, rarity = 3 },
+			{items = {"bitchange:mineninth 6"} }
 		}
 	},
 })
@@ -37,7 +32,6 @@ minetest.register_node("bitchange:mineninth_in_ground", {
 minetest.register_node("bitchange:minecoinblock", {
 	description = "MineCoin Block",
 	tiles = { "bitchange_minecoinblock.png" },
-	is_ground_content = true,
 	groups = {cracky=2},
 	sounds = default.node_sound_stone_defaults(),
 	stack_max = 30000,
@@ -55,10 +49,7 @@ minetest.register_craftitem("bitchange:mineninth", {
 	stack_max = 30000,
 })
 
-minetest.register_craftitem("bitchange:coinbase", {
-	description = "Coin base",
-	inventory_image = "bitchange_coinbase.png",
-})
+minetest.register_alias("bitchange:coinbase", "bitchange:mineninth")
 
 -- Crafting
 minetest.register_craft({
@@ -94,12 +85,6 @@ minetest.register_craft({
 })
 
 -- Cooking
-minetest.register_craft({
-	type = "cooking",
-	recipe = "bitchange:coinbase",
-	output = "bitchange:mineninth",
-})
-
 minetest.register_craft({
 	type = "cooking",
 	recipe = "default:goldblock",

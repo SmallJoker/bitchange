@@ -1,11 +1,6 @@
---Created by Krock for the BitChange mod
 bitchange = {}
 bitchange.mod_path = minetest.get_modpath("bitchange")
 local world_path = minetest.get_worldpath()
-
-if rawget(_G, "freeminer") then
-	minetest = freeminer
-end
 
 dofile(bitchange.mod_path.."/config.default.txt")
 -- Copied from moretrees mod
@@ -54,7 +49,7 @@ if bitchange.enable_bank then
 		dofile(bitchange.mod_path.."/bank.lua")
 		bitchange.bank.file_path = world_path.."/bitchange_bank_"..loaded_bank
 		dofile(bitchange.mod_path.."/bank_"..loaded_bank..".lua")
-		print("[BitChange] Bank loaded: "..loaded_bank)
+		minetest.log("action", "[BitChange] Bank loaded: "..loaded_bank)
 	end
 end
 
@@ -66,13 +61,12 @@ if not minetest.setting_getbool("creative_mode") and bitchange.initial_give > 0 
 end
 
 -- Privs
-minetest.register_privilege("bitchange", "Can access to owned nodes of the bitchange mod")
 function bitchange.has_access(owner, player_name)
 	if player_name == owner or owner == "" then
 		return true
 	end
 	local privs = minetest.get_player_privs(player_name)
-	return privs.server or privs.bitchange
+	return privs.server or privs.protection_bypass
 end
 
-print("[BitChange] Loaded.")
+minetest.log("action", "[BitChange] Loaded.")
