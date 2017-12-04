@@ -191,15 +191,15 @@ minetest.register_on_player_receive_fields(function(sender, formname, fields)
 		return
 	end
 
-	local meta = minetest.get_meta(pos)
-	local title = meta:get_string("title") or ""
-	local shop_owner = meta:get_string("owner")
 	if fields.quit then
 		exchange_shop[player_name] = nil
 		return
 	end
+	local meta = minetest.get_meta(pos)
+	local title = meta:get_string("title")
+	local shop_owner = meta:get_string("owner")
 
-	if fields.title then
+	if fields.title and bitchange.has_access(shop_owner, player_name) then
 		-- Limit title length
 		fields.title = fields.title:sub(1, 80)
 		if title ~= fields.title then
