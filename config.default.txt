@@ -13,9 +13,9 @@ bitchange.enable_donationbox		= true
 -- Tin		moreores
 -- Zinc		technic_worldgen
 -- Quartz	quartz
-bitchange.use_moreores_tin		= false
 bitchange.use_technic_zinc		= false
 bitchange.use_quartz			= false
+bitchange.use_default_tin		= false
 
 -- Pipeworks support
 bitchange.exchangeshop_pipeworks	= false
