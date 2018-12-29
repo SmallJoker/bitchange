@@ -1,5 +1,4 @@
 default
-moreores?
 pipeworks?
 quartz?
 technic_worldgen?
