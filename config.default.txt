@@ -10,18 +10,17 @@ bitchange.enable_warehouse    = false
 bitchange.enable_toolrepair   = true
 bitchange.enable_donationbox  = true
 
+-- Enable/Disable Converting Currency Via Crafting
+bitchange.craft_convert_currency = false
+
 -- Converting other ores to MineCoins
 -- Tin		default
 -- Zinc		technic_worldgen
 -- Quartz	quartz
 bitchange.use_technic_zinc = false
 bitchange.use_quartz       = false
-bitchange.use_default_tin  = false
+bitchange.use_default_tin  = true
 
 -- Pipeworks support
 bitchange.exchangeshop_pipeworks = false
 bitchange.warehouse_pipeworks    = false
-
--- Advanced generation settings
--- Change in 'minecoins.lua', starting at line 101
-bitchange.enable_generation = false
